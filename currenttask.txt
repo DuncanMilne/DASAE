@@ -1,0 +1,1 @@
+get server to time for 10 seconds and send callback to client to ping

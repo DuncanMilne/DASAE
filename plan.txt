@@ -1,0 +1,25 @@
+CLIENT  // X indicates I have added it to the interface
+- Create auction items X
+  - [name, min item value, close time, id]
+- Bid against auction items X
+- View available auction items X
+- Query 'finished' auctions X
+- Be notified of the auction result
+  - Via a callback
+  - Provide info about bid/auction status
+- 'Heartbeat' check that server is still responsive
+
+SERVER
+- Maintain a list of currently active auctions
+- Maintain the state of each auction
+  - Server is responsible for identifying and processing 'finished' auctions:
+    * Callback to bidders
+    * Remove it from list of active auctions
+    * 'Store' the finished auction's data somehow
+- Individual handler threads for each connected client (???)
+- Retain finished auction info for querying
+- Save/restore state from permanent memory
+  - Can be used to 'bootstrap' or initialise the server for testing
+- Failure detection
+  - Some kind of 'heartbeat' mechanism?
+  - Could have the heartbeat give some info about server load?
