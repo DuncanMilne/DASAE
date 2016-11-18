@@ -5,8 +5,12 @@ import java.rmi.NotBoundException;
 import java.rmi.*;
 import java.rmi.server.*;
 import java.net.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Scanner;
 
-public class AuctionClient extends UnicastRemoteObject implements AuctionClientIntf {
+public class AuctionClient extends UnicastRemoteObject implements AuctionClientIntf, Runnable {
 
   public AuctionClient() throws RemoteException {
     super();
@@ -17,16 +21,30 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
       // Create the reference to the remote object through the rmiregistry
       AuctionHouse a = (AuctionHouse) /*(AuctionHouse) casts it to an AuctionHouse */
       Naming.lookup("rmi://localhost/AuctionHouse");
+
+      AuctionClient auctionClient = new AuctionClient();
+
+      auctionClient.startHeartbeat(a);
+
       // Now use the reference a to call remote methods
-      /* #TODO custom ones for this
-      System.out.println("3+21="+ c.add(3, 21) );
-      System.out.println("18-9="+ c.sub(18, 9) );
-      System.out.println("4*17="+ c.mul(4, 17) );
-      System.out.println("70/10="+ c.div(70, 10) );
-      System.out.println("2^5="+ c.pow(2, 5) );
-      */
-      AuctionClientIntf auctionClient = new AuctionClient();
-      auctionClient.callBack(a);
+
+      Scanner standardInput = new Scanner(System.in);
+
+			System.out.print("1: Create Auction 2: Show Available Items ");
+
+      String line = standardInput.nextLine();
+      switch(Integer.parseInt(line)) {
+        case 1:
+          System.out.println("Please enter name of item: ");
+          String name = standardInput.nextLine();
+          System.out.println("Please enter starting price of item: ");
+          double minPrice = Integer.parseInt(standardInput.nextLine());
+          a.createAuctionItem(name, minPrice, new Date());
+        case 2:
+          System.out.println(a.showAvailableAuctionItems());
+      }
+      //for show available auctions do callback that returns the
+      // auctionClient.callBack(a); disable temporarily
     }
 
   // Catch the exceptions that may occur – bad URL, Remote exception
@@ -54,7 +72,22 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
     a.registerObject(this,"test", 5000);
    }
    public void callBackString(String n) throws RemoteException {
-     System.out.println("server says " + n);
+     System.out.println(n);
   }
 
+  public void startHeartbeat(AuctionHouse a) throws RemoteException {
+    while (!Thread.currentThread().isInterrupted()) {
+    try {
+      Thread.sleep(10000);
+    } catch(InterruptedException e) {
+      System.out.println("InterruptedException");
+    }
+    System.out.println("pinging server");
+      if (a.heartbeatMonitor()) {
+        System.out.println("server alive");
+      } else {
+        System.out.println("server dead");
+      }
+    }
+  }
 }

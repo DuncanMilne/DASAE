@@ -7,9 +7,8 @@ public class AuctionServer {
     //by repeating the following method.
     try {
       AuctionHouse a = new AuctionHouseImpl();
-      System.out.println("Test");
       Naming.rebind("rmi://localhost/AuctionHouse", a);
-      System.out.println("Test1");
+      System.out.println("Server now running");
     } catch (Exception e) {
       System.out.println("Server Error: " + e);
     }
