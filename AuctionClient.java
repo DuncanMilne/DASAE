@@ -6,7 +6,7 @@ import java.rmi.*;
 import java.rmi.server.*;
 import java.net.*;
 
-public class AuctionClient extends UnicastRemoteObject {
+public class AuctionClient extends UnicastRemoteObject implements AuctionClientIntf {
 
   public AuctionClient() throws RemoteException {
     super();
@@ -25,8 +25,8 @@ public class AuctionClient extends UnicastRemoteObject {
       System.out.println("70/10="+ c.div(70, 10) );
       System.out.println("2^5="+ c.pow(2, 5) );
       */
-      AuctionClient auctionClient = new AuctionClient();
-      auctionClient.pingServer(a);
+      AuctionClientIntf auctionClient = new AuctionClient();
+      auctionClient.callBack(a);
     }
 
   // Catch the exceptions that may occur – bad URL, Remote exception
@@ -50,11 +50,11 @@ public class AuctionClient extends UnicastRemoteObject {
     }
   }
 
-  public void callBack(String s) throws RemoteException {
-      System.out.println(s);
+  public void callBack(AuctionHouse a) throws RemoteException {
+    a.registerObject(this,"test", 5000);
    }
+   public void callBackString(String n) throws RemoteException {
+     System.out.println("server says " + n);
+  }
 
-   public void pingServer(AuctionHouse a) throws RemoteException{
-     a.registerObject(this, "test", 5);
-   }
 }

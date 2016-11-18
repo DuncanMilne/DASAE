@@ -9,6 +9,7 @@ public interface AuctionHouse extends java.rmi.Remote {
 
   public ArrayList<Auction> displayFinishedAuctions() throws RemoteException;
 
-  public void registerObject(AuctionClient client, String n, int t) throws RemoteException;
+  public void registerObject(AuctionClientIntf client, String n, int t) throws RemoteException;
 
+  public void talk() throws RemoteException;
 }

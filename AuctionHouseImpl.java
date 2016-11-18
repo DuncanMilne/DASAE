@@ -28,14 +28,19 @@ public class AuctionHouseImpl extends UnicastRemoteObject implements AuctionHous
     return null;
   }
 
+  public void talk() throws RemoteException {
+    System.out.println("got here");
+  }
 
-  public void registerObject(AuctionClient client, String n, int t) throws RemoteException {
+  public void registerObject(AuctionClientIntf client, String n, int t) throws RemoteException {
+    System.out.println("TEST");
+
    try {
      Thread.sleep(t);
    } catch(InterruptedException e) {}
      System.out.format("Calling client %s\n", n);
      try {
-       client.callBack("server says hi to: " + n);
+       client.callBackString("server says hi to: " + n);
      } catch(RemoteException e) {
         e.printStackTrace();
      }

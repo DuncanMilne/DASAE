@@ -23,3 +23,7 @@ SERVER
 - Failure detection
   - Some kind of 'heartbeat' mechanism?
   - Could have the heartbeat give some info about server load?
+
+
+store linked list of waiting clients for auction to finish maybe sort by soonest finishing first then just wait on the first ones
+or for each auction give them a linked list off people listening and each auction has a thread that waits until it finishes
