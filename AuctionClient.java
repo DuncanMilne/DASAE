@@ -52,7 +52,7 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
             Calendar cal = Calendar.getInstance();
             System.out.println(cal.toString());
             //cal.set(Integer.parseInt(values[2]), Integer.parseInt(values[1]), Integer.parseInt(values[0]), Integer.parseInt(values[3]), Integer.parseInt(values[4]), Integer.parseInt(values[5]));
-            cal.set(2016, 10, 19, 20, 40, 0);
+            cal.set(2016, 10, 19, 19, 34, 0);
             System.out.println(cal.toString());
             a.createAuctionItem(name, minPrice, cal.getTimeInMillis()/1000);
             break;
@@ -118,4 +118,10 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
       }
     }
   }
+
+   public void auctionFinished() throws RemoteException {
+     System.out.println("Auction you were following has finished");
+   }
+
+
 }

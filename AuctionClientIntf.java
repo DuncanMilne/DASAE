@@ -5,4 +5,5 @@ public interface AuctionClientIntf extends Remote {
 
    public void callBackString(String s) throws java.rmi.RemoteException;
 
+   public void auctionFinished() throws RemoteException; 
 }

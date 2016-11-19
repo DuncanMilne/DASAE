@@ -1,3 +1,1 @@
-add bidding -> compare currentbid to new bid and return string saying "unable to do so" if its less, otherwise update it
-maybe make currentwinner for every auction
-Also ensure when a client bids on an auction, the auction isnt finish. this is to account for the fact that the periodic timer might not have caught an auction before someone bids
+

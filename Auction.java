@@ -23,13 +23,16 @@ public class Auction extends UnicastRemoteObject implements AuctionIntf {
     this.currentBidValue = minItemValue;
     this.closeTime = closeTime;
     this.id = id;
+    toCallback = new ArrayList<AuctionClientIntf>();
   }
 
-  public boolean bidOnItem(double bidValue, AuctionClientIntf client) throws RemoteException{
-    //need to do a lot more in here
-    if (bidValue > currentBidValue) {
+  public boolean bidOnItem(double bidValue, AuctionClientIntf client) throws RemoteException{  //probably need to make sure this is synchronized
+    if (bidValue > currentBidValue && (Calendar.getInstance().getTimeInMillis()/1000) < closeTime) { //check whether the time the bid was placed is after the end of the auction, if so, bid fails
       currentBidValue = bidValue;
       currentWinner = client;
+      if (!toCallback.contains(client)){
+        toCallback.add(client);
+      }
       // alert client theyve been overtaken #TODO
       return true;
     }
@@ -44,6 +47,10 @@ public class Auction extends UnicastRemoteObject implements AuctionIntf {
 
   public long getCloseTime() {
     return closeTime;
+  }
+
+  public ArrayList<AuctionClientIntf> getToCallback() {
+    return toCallback;
   }
 
 }
