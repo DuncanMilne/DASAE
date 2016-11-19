@@ -1,16 +1,17 @@
 CLIENT  // X indicates I have added it to the interface
 - Create auction items X
   - [name, min item value, close time, id]
+  - for auction close times we could ask the user to enter a date and a time in format DD/MM/YYYY and HH/MM/SS and then convert to seconds (handout says it needs to be specified in seconds)
 - Bid against auction items X
 - View available auction items X
 - Query 'finished' auctions X
 - Be notified of the auction result
   - Via a callback
   - Provide info about bid/auction status
-- 'Heartbeat' check that server is still responsive
+- 'Heartbeat' check that server is still responsive X
 
 SERVER
-- Maintain a list of currently active auctions
+- Maintain a list of currently active auctions X
 - Maintain the state of each auction
   - Server is responsible for identifying and processing 'finished' auctions:
     * Callback to bidders

@@ -6,28 +6,42 @@ import java.util.Date;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Calendar;
 
 public class AuctionHouseImpl extends UnicastRemoteObject implements AuctionHouse {
 
-  private static HashMap<Integer, Auction> auctions = new HashMap<Integer, Auction>(); // int is id, auction is auction pertaining to the id
+  protected static HashMap<Integer, Auction> auctions = new HashMap<Integer, Auction>(); // int is id, auction is auction pertaining to the id
+  protected static HashMap<Integer, Auction> finishedAuctions = new HashMap<Integer, Auction>(); // int is id, auction is auction pertaining to the id
   private static int currentId = 0;
+  private static Thread auctionHouseCleaner;
 
   public AuctionHouseImpl() throws java.rmi.RemoteException {
     super();
+    auctionHouseCleaner = (new Thread(new AuctionHouseCleaner(this)));
+    auctionHouseCleaner.start();
   }
 
-  public void createAuctionItem(String name, double minItemValue, Date closeTime) throws java.rmi.RemoteException {
+  public void createAuctionItem(String name, double minItemValue, long closeTime) throws java.rmi.RemoteException {
     auctions.put(currentId,new Auction(name, minItemValue, closeTime, currentId));
     currentId++;
   }
 
-  public boolean bidOnItem(Auction auction, double bidValue) throws RemoteException {
-    auction.bidOnItem(bidValue);
-    return true;
+  public boolean bidOnItem(int itemID, double bidValue, AuctionClientIntf client) throws RemoteException {
+    Auction auction = auctions.get(itemID);
+    if(auction.bidOnItem(bidValue, client)) {
+      return true;
+    }
+    return false;
   }
 
-  public ArrayList<Auction> displayFinishedAuctions() throws RemoteException {
-    return null;
+  public String displayFinishedAuctions() throws RemoteException {
+    Iterator it = finishedAuctions.entrySet().iterator();
+    String returnString = "";
+    while (it.hasNext()){
+        HashMap.Entry pair = (HashMap.Entry)it.next();
+        returnString += "Listing " + pair.getKey() + " Item is " +  pair.getValue().toString() + "\n";
+    }
+    return returnString;
   }
 
   //stop returning a hashmap

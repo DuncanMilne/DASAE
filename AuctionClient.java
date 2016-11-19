@@ -5,15 +5,16 @@ import java.rmi.NotBoundException;
 import java.rmi.*;
 import java.rmi.server.*;
 import java.net.*;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Scanner;
+import java.util.*;
 
-public class AuctionClient extends UnicastRemoteObject implements AuctionClientIntf, Runnable {
+public class AuctionClient extends UnicastRemoteObject implements AuctionClientIntf {
+
+  // each client running this will have their own static client object
+  private static AuctionClient auctionClient;
 
   public AuctionClient() throws RemoteException {
     super();
+    auctionClient = this;
   }
 
   public static void main(String[] args) {
@@ -22,26 +23,53 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
       AuctionHouse a = (AuctionHouse) /*(AuctionHouse) casts it to an AuctionHouse */
       Naming.lookup("rmi://localhost/AuctionHouse");
 
-      AuctionClient auctionClient = new AuctionClient();
+      /*AuctionClient auctionClient = new AuctionClient();
 
-      auctionClient.startHeartbeat(a);
+      auctionClient.startHeartbeat(a);*/
+
+      Timer timer = new Timer();
+
+      timer.scheduleAtFixedRate(new HeartbeatThread(a), 15000000, 15000000); // heartbeat every 5 mins
 
       // Now use the reference a to call remote methods
 
       Scanner standardInput = new Scanner(System.in);
 
-			System.out.print("1: Create Auction 2: Show Available Items ");
+      while(true) { //change to run while client is still connected?
 
-      String line = standardInput.nextLine();
-      switch(Integer.parseInt(line)) {
-        case 1:
-          System.out.println("Please enter name of item: ");
-          String name = standardInput.nextLine();
-          System.out.println("Please enter starting price of item: ");
-          double minPrice = Integer.parseInt(standardInput.nextLine());
-          a.createAuctionItem(name, minPrice, new Date());
-        case 2:
-          System.out.println(a.showAvailableAuctionItems());
+      	System.out.print("1: Create Auction 2: Show Available Items ");
+        String line = standardInput.nextLine();
+
+        switch(Integer.parseInt(line)) {
+          case 1:
+            System.out.println("Please enter name of item: ");
+            String name = standardInput.nextLine();
+            System.out.println("Please enter starting price of item: ");
+            double minPrice = Integer.parseInt(standardInput.nextLine());
+            //System.out.println("Please enter date in time in the format DD/MM/YYYY/HH/MM/SS: ");
+            //String date = standardInput.nextLine();
+            //String[] values = date.split("/");
+            Calendar cal = Calendar.getInstance();
+            System.out.println(cal.toString());
+            //cal.set(Integer.parseInt(values[2]), Integer.parseInt(values[1]), Integer.parseInt(values[0]), Integer.parseInt(values[3]), Integer.parseInt(values[4]), Integer.parseInt(values[5]));
+            cal.set(2016, 10, 19, 20, 40, 0);
+            System.out.println(cal.toString());
+            a.createAuctionItem(name, minPrice, cal.getTimeInMillis()/1000);
+            break;
+          case 2:
+            System.out.println(a.showAvailableAuctionItems());
+            break;
+          case 3:
+            System.out.println("Enter id of item you would like to bid on ");
+            int itemID = Integer.parseInt(standardInput.nextLine());
+            System.out.println("How much would you like to bid? ");
+            double bidValue = Integer.parseInt(standardInput.nextLine());
+            if (a.bidOnItem(itemID, bidValue, auctionClient)) {
+              System.out.println("Successfully bid on item");
+            } else {
+              System.out.println("Bid value not large enough");
+            }
+        }
       }
       //for show available auctions do callback that returns the
       // auctionClient.callBack(a); disable temporarily
