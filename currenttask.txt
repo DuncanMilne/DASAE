@@ -1,1 +1,1 @@
-
+get client.auctionfinished working

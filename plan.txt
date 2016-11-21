@@ -6,18 +6,18 @@ CLIENT  // X indicates I have added it to the interface
 - View available auction items X
 - Query 'finished' auctions X
 - Be notified of the auction result
-  - Via a callback
-  - Provide info about bid/auction status
+  - Via a callback  X
+  - Provide info about bid/auction status   // Need to still provide info
 - 'Heartbeat' check that server is still responsive X
 
 SERVER
 - Maintain a list of currently active auctions X
 - Maintain the state of each auction
   - Server is responsible for identifying and processing 'finished' auctions:
-    * Callback to bidders
-    * Remove it from list of active auctions
+    * Callback to bidders // DONE
+    * Remove it from list of active auctions // DONE
     * 'Store' the finished auction's data somehow
-- Individual handler threads for each connected client (???)
+- Individual handler threads for each connected client (???) //?
 - Retain finished auction info for querying
 - Save/restore state from permanent memory
   - Can be used to 'bootstrap' or initialise the server for testing
@@ -26,5 +26,4 @@ SERVER
   - Could have the heartbeat give some info about server load?
 
 
-store linked list of waiting clients for auction to finish maybe sort by soonest finishing first then just wait on the first ones
-or for each auction give them a linked list off people listening and each auction has a thread that waits until it finishes
+kelvin says not to bother with saving/restoring auction state to/from permanent storage

@@ -4,14 +4,14 @@ import java.rmi.server.*;
 import java.net.*;
 import java.util.Date;
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Calendar;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AuctionHouseImpl extends UnicastRemoteObject implements AuctionHouse {
 
-  protected static HashMap<Integer, Auction> auctions = new HashMap<Integer, Auction>(); // int is id, auction is auction pertaining to the id
-  protected static HashMap<Integer, Auction> finishedAuctions = new HashMap<Integer, Auction>(); // int is id, auction is auction pertaining to the id
+  protected static ConcurrentHashMap<Integer, Auction> auctions = new ConcurrentHashMap<Integer, Auction>(); // int is id, auction is auction pertaining to the id
+  protected static ConcurrentHashMap<Integer, Auction> finishedAuctions = new ConcurrentHashMap<Integer, Auction>(); // int is id, auction is auction pertaining to the id
   private static int currentId = 0;
   private static Thread auctionHouseCleaner;
 
@@ -21,8 +21,8 @@ public class AuctionHouseImpl extends UnicastRemoteObject implements AuctionHous
     auctionHouseCleaner.start();
   }
 
-  public void createAuctionItem(String name, double minItemValue, long closeTime) throws java.rmi.RemoteException {
-    auctions.put(currentId,new Auction(name, minItemValue, closeTime, currentId));
+  public void createAuctionItem(String name, double minItemValue, long closeTime, AuctionClientIntf client) throws java.rmi.RemoteException {
+    auctions.put(currentId,new Auction(name, minItemValue, closeTime, currentId, client));
     currentId++;
   }
 
@@ -38,7 +38,7 @@ public class AuctionHouseImpl extends UnicastRemoteObject implements AuctionHous
     Iterator it = finishedAuctions.entrySet().iterator();
     String returnString = "";
     while (it.hasNext()){
-        HashMap.Entry pair = (HashMap.Entry)it.next();
+        ConcurrentHashMap.Entry pair = (ConcurrentHashMap.Entry)it.next();
         returnString += "Listing " + pair.getKey() + " Item is " +  pair.getValue().toString() + "\n";
     }
     return returnString;
@@ -49,14 +49,10 @@ public class AuctionHouseImpl extends UnicastRemoteObject implements AuctionHous
     Iterator it = auctions.entrySet().iterator();
     String returnString = "";
     while (it.hasNext()){
-        HashMap.Entry pair = (HashMap.Entry)it.next();
+        ConcurrentHashMap.Entry pair = (ConcurrentHashMap.Entry)it.next();
         returnString += "Listing " + pair.getKey() + " Item is " +  pair.getValue().toString() + "\n";
     }
     return returnString;
-  }
-
-  public void talk() throws RemoteException {
-    System.out.println("got here");
   }
 
   public void registerObject(AuctionClientIntf client, String n, int t) throws RemoteException {

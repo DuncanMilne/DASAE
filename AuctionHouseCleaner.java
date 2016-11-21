@@ -26,11 +26,14 @@ public class AuctionHouseCleaner implements Runnable {
           System.out.println("auctions closetime " + cal.getTimeInMillis()/1000);
           if (auction.getCloseTime() < (cal.getTimeInMillis()/1000)) {
             System.out.println("found finished auction");
-            for (AuctionClientIntf client:a.auctions.get(pair.getKey()).getToCallback()) {
+            try {
+                auction.getOwner().auctionFinished();
+              } catch (RemoteException e) {
+                System.out.println("Remote Exception");
+              }
+            for (AuctionClientIntf client:auction.getToCallback()) {
               try {
-                System.out.println("here " +  a.auctions.get(pair.getKey()).getToCallback().size());
                 client.auctionFinished();
-                System.out.println("now here ");
               } catch (RemoteException e) {
                 System.out.println("Remote Exception");
               }

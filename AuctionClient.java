@@ -23,21 +23,22 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
       AuctionHouse a = (AuctionHouse) /*(AuctionHouse) casts it to an AuctionHouse */
       Naming.lookup("rmi://localhost/AuctionHouse");
 
-      /*AuctionClient auctionClient = new AuctionClient();
+      AuctionClient auctionClient = new AuctionClient();
 
-      auctionClient.startHeartbeat(a);*/
+      //auctionClient.startHeartbeat(a);
 
       Timer timer = new Timer();
 
       timer.scheduleAtFixedRate(new HeartbeatThread(a), 15000000, 15000000); // heartbeat every 5 mins
 
+      System.out.println("past the timer schedulin");
       // Now use the reference a to call remote methods
 
       Scanner standardInput = new Scanner(System.in);
 
       while(true) { //change to run while client is still connected?
 
-      	System.out.print("1: Create Auction 2: Show Available Items ");
+      	System.out.print("1: Create Auction 2: Show Available Items 3: Bid on Item");
         String line = standardInput.nextLine();
 
         switch(Integer.parseInt(line)) {
@@ -50,11 +51,9 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
             //String date = standardInput.nextLine();
             //String[] values = date.split("/");
             Calendar cal = Calendar.getInstance();
-            System.out.println(cal.toString());
             //cal.set(Integer.parseInt(values[2]), Integer.parseInt(values[1]), Integer.parseInt(values[0]), Integer.parseInt(values[3]), Integer.parseInt(values[4]), Integer.parseInt(values[5]));
-            cal.set(2016, 10, 19, 19, 34, 0);
-            System.out.println(cal.toString());
-            a.createAuctionItem(name, minPrice, cal.getTimeInMillis()/1000);
+            cal.set(2016, 10, 21, 18, 56, 30);
+            a.createAuctionItem(name, minPrice, cal.getTimeInMillis()/1000, auctionClient);
             break;
           case 2:
             System.out.println(a.showAvailableAuctionItems());
@@ -120,6 +119,7 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
   }
 
    public void auctionFinished() throws RemoteException {
+     System.out.println();
      System.out.println("Auction you were following has finished");
    }
 

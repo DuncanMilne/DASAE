@@ -3,11 +3,13 @@ import java.rmi.*;
 import java.util.ArrayList;
 import java.rmi.server.*;
 import java.net.*;
+import java.io.Serializable;
+
 /* each auction in the auction house has an auction obkect.
 auction objects have a current bid value, starting val, closetime, name, (description?)
 and a unique identifier */
 
-public class Auction extends UnicastRemoteObject implements AuctionIntf {
+public class Auction extends UnicastRemoteObject implements AuctionIntf, Serializable {
 
   public String name;
   private double minItemValue;
@@ -15,14 +17,16 @@ public class Auction extends UnicastRemoteObject implements AuctionIntf {
   private double currentBidValue;
   private int id;
   private AuctionClientIntf currentWinner;  //client currently winning auciton
+  private AuctionClientIntf owner;  //client who created auction
   private ArrayList<AuctionClientIntf> toCallback; //list of clients to callback when this auction finishes
 
-  public Auction(String name, double minItemValue, long closeTime, int id) throws RemoteException {
+  public Auction(String name, double minItemValue, long closeTime, int id, AuctionClientIntf client) throws RemoteException {
     this.name = name;
     this.minItemValue = minItemValue;
     this.currentBidValue = minItemValue;
     this.closeTime = closeTime;
     this.id = id;
+    this.owner = client;
     toCallback = new ArrayList<AuctionClientIntf>();
   }
 
@@ -51,6 +55,10 @@ public class Auction extends UnicastRemoteObject implements AuctionIntf {
 
   public ArrayList<AuctionClientIntf> getToCallback() {
     return toCallback;
+  }
+
+  public AuctionClientIntf getOwner() {
+    return owner;
   }
 
 }
