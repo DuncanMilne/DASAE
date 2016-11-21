@@ -31,7 +31,7 @@ public class Auction extends UnicastRemoteObject implements AuctionIntf, Seriali
   }
 
   public boolean bidOnItem(double bidValue, AuctionClientIntf client) throws RemoteException{  //probably need to make sure this is synchronized
-    if (bidValue > currentBidValue && (Calendar.getInstance().getTimeInMillis()/1000) < closeTime) { //check whether the time the bid was placed is after the end of the auction, if so, bid fails
+    if (bidValue > currentBidValue && (Calendar.getInstance().getTimeInMillis()/1000) < closeTime && this.owner != client) { //check whether the time the bid was placed is after the end of the auction, if so, bid fails
       currentBidValue = bidValue;
       currentWinner = client;
       if (!toCallback.contains(client)){

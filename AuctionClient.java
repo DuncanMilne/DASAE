@@ -52,7 +52,7 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
             //String[] values = date.split("/");
             Calendar cal = Calendar.getInstance();
             //cal.set(Integer.parseInt(values[2]), Integer.parseInt(values[1]), Integer.parseInt(values[0]), Integer.parseInt(values[3]), Integer.parseInt(values[4]), Integer.parseInt(values[5]));
-            cal.set(2016, 10, 21, 18, 56, 30);
+            cal.set(2016, 10, 21, 20, 56, 30);
             a.createAuctionItem(name, minPrice, cal.getTimeInMillis()/1000, auctionClient);
             break;
           case 2:
