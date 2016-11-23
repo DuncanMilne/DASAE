@@ -1,11 +1,10 @@
-import java.rmi.Naming;
-import java.rmi.RemoteException;
-import java.net.MalformedURLException;
-import java.rmi.NotBoundException;
 import java.rmi.*;
 import java.rmi.server.*;
 import java.net.*;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.Timer;
 
 public class AuctionClient extends UnicastRemoteObject implements AuctionClientIntf {
 
@@ -89,8 +88,9 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
             }
           case 4:
             try{
-              a.talk();
-              System.out.println("Server still alive");
+              if(a.heartbeatMonitor()) {
+                System.out.println("Server still alive");
+              }
             } catch (RemoteException e) {
               System.out.println("Server died");
             }

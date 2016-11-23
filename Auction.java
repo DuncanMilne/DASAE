@@ -1,15 +1,9 @@
 import java.util.Calendar;
 import java.rmi.*;
-import java.util.ArrayList;
-import java.rmi.server.*;
 import java.net.*;
-import java.io.Serializable;
 import java.util.HashSet;
-/* each auction in the auction house has an auction obkect.
-auction objects have a current bid value, starting val, closetime, name, (description?)
-and a unique identifier */
 
-public class Auction extends UnicastRemoteObject implements AuctionIntf, Serializable {
+public class Auction {
 
   public String name;
   private double minItemValue;
@@ -31,7 +25,7 @@ public class Auction extends UnicastRemoteObject implements AuctionIntf, Seriali
     toCallback = new HashSet<AuctionClientIntf>();
   }
 
-  public boolean bidOnItem(double bidValue, AuctionClientIntf client) throws RemoteException{  //probably need to make sure this is synchronized
+  public synchronized boolean bidOnItem(double bidValue, AuctionClientIntf client) throws RemoteException{  //probably need to make sure this is synchronized
     if (bidValue > currentBidValue && (Calendar.getInstance().getTimeInMillis()/1000) < closeTime && this.owner != client) { //check whether the time the bid was placed is after the end of the auction, if so, bid fails
       if (currentWinner!=null)
         currentWinner.overtakenAlert(id, bidValue);
@@ -45,11 +39,15 @@ public class Auction extends UnicastRemoteObject implements AuctionIntf, Seriali
     return false;
   }
 
-  public String toAuctionString(int activeOrFinished) {
+  public String toAuctionString() {
     long currentSeconds = Calendar.getInstance().getTimeInMillis()/1000;
     String returnString = "";
-    if (activeOrFinished == 0) {    // #TODO work out if its active or finished here instead
-      returnString += " has name \"" + name + "\", has a current max bid of " + currentBidValue + " and will end " + ((closeTime - currentSeconds)/1000) + " seconds from now\n";
+    if (currentSeconds < closeTime) {
+      if (currentBidValue == -1) {
+        returnString += " has name \"" + name + "\", doesn't current have any bids and will end " + ((closeTime - currentSeconds)) + " seconds from now\n";
+      } else {
+        returnString += " has name \"" + name + "\", has a current max bid of " + currentBidValue + " and will end " + ((closeTime - currentSeconds)) + " seconds from now\n";
+      }
     } else {
       if (currentBidValue!=-1) {
         returnString += " has name \"" + name + "\" and the winning bid was "+ currentBidValue;
@@ -68,27 +66,27 @@ public class Auction extends UnicastRemoteObject implements AuctionIntf, Seriali
     return toCallback;
   }
 
-    public AuctionClientIntf getOwner() {
+  public AuctionClientIntf getOwner() {
+    return owner;
+  }
+
+  public AuctionClientIntf getCurrentWinner() {
+    if (currentWinner!=null) {
+      return currentWinner;
+    } else {
       return owner;
     }
+  }
 
-    public AuctionClientIntf getCurrentWinner() {
-      if (currentWinner!=null) {
-        return currentWinner;
-      } else {
-        return owner;
-      }
-    }
+  public int getID() {
+    return id;
+  }
 
-    public int getID() {
-      return id;
-    }
+  public double getCurrentBid() {
+    return currentBidValue;
+  }
 
-    public double  getCurrentBid() {
-      return currentBidValue;
-    }
-
-    public String getName() {
-      return name;
-    }
+  public String getName() {
+    return name;
+  }
 }

@@ -1,5 +1,6 @@
 import java.util.*;
 import java.rmi.*;
+
 public class HeartbeatThread extends TimerTask {
 
     AuctionHouse a;

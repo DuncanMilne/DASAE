@@ -62,7 +62,7 @@ public class AuctionHouseCleaner implements Runnable {
           HashMap.Entry pair = (HashMap.Entry)it.next();
           cal = Calendar.getInstance();
           auction = (Auction) pair.getValue();
-          if (auction.getCloseTime() + (15000) > (cal.getTimeInMillis()/1000)) { // after five minutes remove from finishedAuctions
+          if (auction.getCloseTime() + (600) < (cal.getTimeInMillis()/1000)) { // after five minutes remove from finishedAuctions
             a.finishedAuctions.remove(pair.getKey());
             System.out.println("Removing auction " + pair.getKey() + " from list of queryable auctions");
           }

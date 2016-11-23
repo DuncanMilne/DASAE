@@ -2,8 +2,6 @@ import java.util.ArrayList;
 import java.rmi.*;
 import java.rmi.server.*;
 import java.net.*;
-import java.util.Date;
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Calendar;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,8 +9,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AuctionHouseImpl extends UnicastRemoteObject implements AuctionHouse {
 
   protected static ConcurrentHashMap<Integer, Auction> auctions = new ConcurrentHashMap<Integer, Auction>(); // int is id, auction is auction pertaining to the id
-  protected static ConcurrentHashMap<Integer, Auction> finishedAuctions = new ConcurrentHashMap<Integer, Auction>(); // int is id, auction is auction pertaining to the id
-  private static int currentId = 3;
+  protected static ConcurrentHashMap<Integer, Auction> finishedAuctions = new ConcurrentHashMap<Integer, Auction>();
+  private static int currentId = 3;   // set as 3 initially because 0, 1 and 2 are created to bootstrap the server
   private static Thread auctionHouseCleaner;
   private static AuctionClientIntf dummyClient;
   private static int clientCount;
@@ -59,7 +57,7 @@ public class AuctionHouseImpl extends UnicastRemoteObject implements AuctionHous
     while (it.hasNext()){
         ConcurrentHashMap.Entry pair = (ConcurrentHashMap.Entry)it.next();
         currentAuction = (Auction) pair.getValue();
-        returnString += "Item with ID " + pair.getKey() +  currentAuction.toAuctionString(activeOrFinished) + "\"\n";
+        returnString += "Item with ID " + pair.getKey() +  currentAuction.toAuctionString() + "\"\n";
     }
     return returnString;
   }

@@ -30,13 +30,13 @@ SERVER
 kelvin says not to bother with saving/restoring auction state to/from permanent storage
 
 STILL TO DO
-ensure remoteexceptions are caught within methods that do callbacks to the client
 pinging server returns server load
-work out if scheduleAtFixedRate is better than thread.sleep();
+Cleanup
 
 TESTING STUFF
 if auctionclient takes an argument "test" create 1k clients
 
 report ideas
 reconnecting clients could be an extension
+why i have synchronized what i've synchronized
 extension possibility - could track all clients and ping them all from the server side. this would allow the server to only be connected to
