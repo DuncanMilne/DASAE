@@ -12,18 +12,28 @@ public class AuctionHouseImpl extends UnicastRemoteObject implements AuctionHous
 
   protected static ConcurrentHashMap<Integer, Auction> auctions = new ConcurrentHashMap<Integer, Auction>(); // int is id, auction is auction pertaining to the id
   protected static ConcurrentHashMap<Integer, Auction> finishedAuctions = new ConcurrentHashMap<Integer, Auction>(); // int is id, auction is auction pertaining to the id
-  private static int currentId = 0;
+  private static int currentId = 3;
   private static Thread auctionHouseCleaner;
+  private static AuctionClientIntf dummyClient;
 
   public AuctionHouseImpl() throws java.rmi.RemoteException {
     super();
     auctionHouseCleaner = (new Thread(new AuctionHouseCleaner(this)));
     auctionHouseCleaner.start();
+    dummyClient = new AuctionClient();
+    Calendar cal = Calendar.getInstance();
+    //create auction that ended a minute ago, ends in 1 min and ends in 5 mins
+    auctions.put(0, new Auction("test1", 2, cal.getTimeInMillis()/1000 - 60000, 0, dummyClient));
+    auctions.put(1, new Auction("test2", 5, cal.getTimeInMillis()/1000 + 60000, 1, dummyClient));
+    auctions.put(2, new Auction("test3", 10, cal.getTimeInMillis()/1000 + 300000, 2, dummyClient));
+    //initiate 3 auctions right off the bat
+
   }
 
-  public void createAuctionItem(String name, double minItemValue, long closeTime, AuctionClientIntf client) throws java.rmi.RemoteException {
+  public int createAuctionItem(String name, double minItemValue, long closeTime, AuctionClientIntf client) throws java.rmi.RemoteException {
     auctions.put(currentId,new Auction(name, minItemValue, closeTime, currentId, client));
     currentId++;
+    return currentId-1;
   }
 
   public boolean bidOnItem(int itemID, double bidValue, AuctionClientIntf client) throws RemoteException {
@@ -34,23 +44,20 @@ public class AuctionHouseImpl extends UnicastRemoteObject implements AuctionHous
     return false;
   }
 
-  public String displayFinishedAuctions() throws RemoteException {
-    Iterator it = finishedAuctions.entrySet().iterator();
-    String returnString = "";
-    while (it.hasNext()){
-        ConcurrentHashMap.Entry pair = (ConcurrentHashMap.Entry)it.next();
-        returnString += "Listing " + pair.getKey() + " Item is " +  pair.getValue().toString() + "\n";
+  // if argument is 1 return finished if 0 return active
+  public String showAuctionItems(int activeOrFinished)throws RemoteException {
+    Iterator it;
+    if (activeOrFinished != 1) {
+      it = auctions.entrySet().iterator();
+    } else {
+      it = finishedAuctions.entrySet().iterator();
     }
-    return returnString;
-  }
-
-  //stop returning a hashmap
-  public String showAvailableAuctionItems()throws RemoteException {
-    Iterator it = auctions.entrySet().iterator();
     String returnString = "";
+    Auction currentAuction;
     while (it.hasNext()){
         ConcurrentHashMap.Entry pair = (ConcurrentHashMap.Entry)it.next();
-        returnString += "Listing " + pair.getKey() + " Item is " +  pair.getValue().toString() + "\n";
+        currentAuction = (Auction) pair.getValue();
+        returnString += "Item with ID " + pair.getKey() +  currentAuction.toAuctionString(activeOrFinished) + "\"\n";
     }
     return returnString;
   }
@@ -70,4 +77,6 @@ public class AuctionHouseImpl extends UnicastRemoteObject implements AuctionHous
    public boolean heartbeatMonitor() throws RemoteException {
      return true;
    }
+
+   public void talk(){}
 }

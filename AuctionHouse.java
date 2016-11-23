@@ -4,15 +4,15 @@ import java.util.Calendar;
 import java.util.HashMap;
 public interface AuctionHouse extends java.rmi.Remote {
 
-  public void createAuctionItem(String name, double minItemValue, long closeTime, AuctionClientIntf client) throws java.rmi.RemoteException;
+  public int createAuctionItem(String name, double minItemValue, long closeTime, AuctionClientIntf client) throws java.rmi.RemoteException;
 
-  public String showAvailableAuctionItems() throws RemoteException;
-
-  public String displayFinishedAuctions() throws RemoteException;
+  public String showAuctionItems(int activeOrFinished) throws RemoteException;
 
   public void registerObject(AuctionClientIntf client, String n, int t) throws RemoteException;
 
   public boolean heartbeatMonitor() throws RemoteException;
 
   public boolean bidOnItem(int itemID, double bidValue, AuctionClientIntf client) throws RemoteException;
+
+  public void talk() throws RemoteException;
 }

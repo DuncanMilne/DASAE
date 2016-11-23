@@ -29,14 +29,11 @@ kelvin says not to bother with saving/restoring auction state to/from permanent 
 
 
 STILL TO DO
-List available items in nicer format
-notify in nicer format. Also let them know if they won, the winners id should be printed as well as the winning bid
-after auctions finish they should still be queryable for a time
-instantiate server with auctions. can set these
+lock auctions
 if auctionclient takes an argument "test" create 1k clients
 ensure remoteexceptions are caught within methods that do callbacks to the client
-allow users to ping server to check if its still alive and return server load
-each client has a list of the itemids which tracks which item they created, when they try to bid on an item check if its in this list, if it is dont allow bid
+pinging server returns server load
+in auction finished callbacks winner ids have to be printed as well. need to make clients ids accessible. also check for min price not met when calling back owner about finished auction
 
 report ideas
 reconnecting clients could be an extension

@@ -27,25 +27,36 @@ public class Auction extends UnicastRemoteObject implements AuctionIntf, Seriali
     this.closeTime = closeTime;
     this.id = id;
     this.owner = client;
+    currentBidValue = -1;
     toCallback = new ArrayList<AuctionClientIntf>();
   }
 
   public boolean bidOnItem(double bidValue, AuctionClientIntf client) throws RemoteException{  //probably need to make sure this is synchronized
     if (bidValue > currentBidValue && (Calendar.getInstance().getTimeInMillis()/1000) < closeTime && this.owner != client) { //check whether the time the bid was placed is after the end of the auction, if so, bid fails
+      if (currentWinner!=null)
+        currentWinner.overtakenAlert(id, bidValue);
       currentBidValue = bidValue;
       currentWinner = client;
       if (!toCallback.contains(client)){
         toCallback.add(client);
       }
-      // alert client theyve been overtaken #TODO
       return true;
     }
     return false;
   }
 
-  public String toString() {
+  public String toAuctionString(int activeOrFinished) {
     long currentSeconds = Calendar.getInstance().getTimeInMillis()/1000;
-    String returnString = "name is " + name + " current bid is " + currentBidValue + " closeTime is " + (closeTime - currentSeconds) + " milliseconds from now";
+    String returnString = "";
+    if (activeOrFinished == 0) {
+      returnString += " has name \"" + name + "\", has a current max bid of " + currentBidValue + " and will end " + ((closeTime - currentSeconds)/1000) + " seconds from now\n";
+    } else {
+      if (currentBidValue!=-1) {
+        returnString += " has name \"" + name + "\" and the winning bid was "+ currentBidValue;
+      } else {
+        returnString += " has name \"" + name + "\" but the item was never bid on";
+      }
+    }
     return returnString;
   }
 
@@ -57,8 +68,12 @@ public class Auction extends UnicastRemoteObject implements AuctionIntf, Seriali
     return toCallback;
   }
 
-  public AuctionClientIntf getOwner() {
-    return owner;
-  }
+    public AuctionClientIntf getOwner() {
+      return owner;
+    }
+
+    public AuctionClientIntf getCurrentWinner() {
+      return owner;
+    }
 
 }
