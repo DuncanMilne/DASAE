@@ -12,6 +12,7 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
   // each client running this will have their own static client object
   private static AuctionClient auctionClient;
   private static ArrayList<Integer> ownsTheseAuctions; //used to ensure client does not bid on their own item
+  public static int id;
 
   public AuctionClient() throws RemoteException {
     super();
@@ -27,6 +28,7 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
 
       AuctionClient auctionClient = new AuctionClient();
 
+      auctionClient.id = a.getNextClientID();
       //auctionClient.startHeartbeat(a);
 
       Timer timer = new Timer();
@@ -147,23 +149,35 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
     }
   }
 
-  public void auctionFinished(int winnerID, long winningBid) throws RemoteException {
+  public void auctionFinished(int winnerID, double winningBid) throws RemoteException {
     System.out.println();
     System.out.println("Auction you had bid on has finished. The winner's id was " + winnerID + " and the winning bid was " + winningBid);
   }
 
-  public void auctionFinishedWinner(int itemID, String itemName) throws RemoteException {
+  public void auctionFinishedWinner(int itemID, int winnerID, String itemName) throws RemoteException {
     System.out.println();
-    System.out.println("Congratulations! You have won " + itemName ". This was auction number " + itemID);
+    System.out.println("Congratulations! You have won " + itemName + ". This was auction number " + itemID);
   }
 
   public void auctionFinishedOwner(int itemID, int winnerID, String itemName) throws RemoteException {
     System.out.println();
-    System.out.println("Congratulations! Your item has sold. The item was " + itemName ". The auction number " + itemID + ". The winners id was " + winnerID);
+    if (winnerID != -1) {
+      System.out.println("Congratulations! Your item has sold. The item was " + itemName + ". The auction number " + itemID + ". The winners id was " + winnerID);
+    } else {
+      System.out.println("Your item " + itemName + " has not sold");
+    }
   }
 
   public void overtakenAlert(int id, double currentBidValue) throws RemoteException {
     System.out.println("You've been overtaken on item "+ id + ". The new highest bid is " + currentBidValue);
+  }
+
+  public int getID() throws RemoteException {
+    return id;
+  }
+
+  public void setID(int nextID) throws RemoteException {
+    this.id = nextID;
   }
 
 }

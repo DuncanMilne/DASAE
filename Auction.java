@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.rmi.server.*;
 import java.net.*;
 import java.io.Serializable;
-
+import java.util.HashSet;
 /* each auction in the auction house has an auction obkect.
 auction objects have a current bid value, starting val, closetime, name, (description?)
 and a unique identifier */
@@ -18,7 +18,7 @@ public class Auction extends UnicastRemoteObject implements AuctionIntf, Seriali
   private int id;
   private AuctionClientIntf currentWinner;  //client currently winning auciton
   private AuctionClientIntf owner;  //client who created auction
-  private ArrayList<AuctionClientIntf> toCallback; //list of clients to callback when this auction finishes
+  private HashSet<AuctionClientIntf> toCallback; //list of clients to callback when this auction finishes
 
   public Auction(String name, double minItemValue, long closeTime, int id, AuctionClientIntf client) throws RemoteException {
     this.name = name;
@@ -28,18 +28,18 @@ public class Auction extends UnicastRemoteObject implements AuctionIntf, Seriali
     this.id = id;
     this.owner = client;
     currentBidValue = -1;
-    toCallback = new ArrayList<AuctionClientIntf>();
+    toCallback = new HashSet<AuctionClientIntf>();
   }
 
   public boolean bidOnItem(double bidValue, AuctionClientIntf client) throws RemoteException{  //probably need to make sure this is synchronized
     if (bidValue > currentBidValue && (Calendar.getInstance().getTimeInMillis()/1000) < closeTime && this.owner != client) { //check whether the time the bid was placed is after the end of the auction, if so, bid fails
       if (currentWinner!=null)
         currentWinner.overtakenAlert(id, bidValue);
-      currentBidValue = bidValue;
-      currentWinner = client;
-      if (!toCallback.contains(client)){
-        toCallback.add(client);
-      }
+        currentBidValue = bidValue;
+        currentWinner = client;
+        if (!toCallback.contains(client)){
+          toCallback.add(client);
+        }
       return true;
     }
     return false;
@@ -48,7 +48,7 @@ public class Auction extends UnicastRemoteObject implements AuctionIntf, Seriali
   public String toAuctionString(int activeOrFinished) {
     long currentSeconds = Calendar.getInstance().getTimeInMillis()/1000;
     String returnString = "";
-    if (activeOrFinished == 0) {
+    if (activeOrFinished == 0) {    // #TODO work out if its active or finished here instead
       returnString += " has name \"" + name + "\", has a current max bid of " + currentBidValue + " and will end " + ((closeTime - currentSeconds)/1000) + " seconds from now\n";
     } else {
       if (currentBidValue!=-1) {
@@ -64,7 +64,7 @@ public class Auction extends UnicastRemoteObject implements AuctionIntf, Seriali
     return closeTime;
   }
 
-  public ArrayList<AuctionClientIntf> getToCallback() {
+  public HashSet<AuctionClientIntf> getToCallback() {
     return toCallback;
   }
 
@@ -73,7 +73,22 @@ public class Auction extends UnicastRemoteObject implements AuctionIntf, Seriali
     }
 
     public AuctionClientIntf getCurrentWinner() {
-      return owner;
+      if (currentWinner!=null) {
+        return currentWinner;
+      } else {
+        return owner;
+      }
     }
 
+    public int getID() {
+      return id;
+    }
+
+    public double  getCurrentBid() {
+      return currentBidValue;
+    }
+
+    public String getName() {
+      return name;
+    }
 }

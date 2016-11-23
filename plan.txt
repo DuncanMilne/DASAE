@@ -1,3 +1,5 @@
+#NOTE DONE ALL EXCEPT SERVER LOAD NOTIFIER
+
 CLIENT  // X indicates I have added it to the interface
 - Create auction items X
   - [name, min item value, close time, id] X
@@ -27,13 +29,13 @@ SERVER
 
 kelvin says not to bother with saving/restoring auction state to/from permanent storage
 
-
 STILL TO DO
-lock auctions
-if auctionclient takes an argument "test" create 1k clients
 ensure remoteexceptions are caught within methods that do callbacks to the client
 pinging server returns server load
-in auction finished callbacks winner ids have to be printed as well. need to make clients ids accessible. also check for min price not met when calling back owner about finished auction
+work out if scheduleAtFixedRate is better than thread.sleep();
+
+TESTING STUFF
+if auctionclient takes an argument "test" create 1k clients
 
 report ideas
 reconnecting clients could be an extension

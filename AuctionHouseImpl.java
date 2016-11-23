@@ -15,18 +15,20 @@ public class AuctionHouseImpl extends UnicastRemoteObject implements AuctionHous
   private static int currentId = 3;
   private static Thread auctionHouseCleaner;
   private static AuctionClientIntf dummyClient;
+  private static int clientCount;
 
   public AuctionHouseImpl() throws java.rmi.RemoteException {
     super();
     auctionHouseCleaner = (new Thread(new AuctionHouseCleaner(this)));
     auctionHouseCleaner.start();
     dummyClient = new AuctionClient();
+    dummyClient.setID(0);
     Calendar cal = Calendar.getInstance();
+    clientCount = 1;
     //create auction that ended a minute ago, ends in 1 min and ends in 5 mins
-    auctions.put(0, new Auction("test1", 2, cal.getTimeInMillis()/1000 - 60000, 0, dummyClient));
-    auctions.put(1, new Auction("test2", 5, cal.getTimeInMillis()/1000 + 60000, 1, dummyClient));
-    auctions.put(2, new Auction("test3", 10, cal.getTimeInMillis()/1000 + 300000, 2, dummyClient));
-    //initiate 3 auctions right off the bat
+    auctions.put(0, new Auction("test1", 2, cal.getTimeInMillis()/1000 - 60, 0, dummyClient));
+    auctions.put(1, new Auction("test2", 5, cal.getTimeInMillis()/1000 + 60, 1, dummyClient));
+    auctions.put(2, new Auction("test3", 10, cal.getTimeInMillis()/1000 + 300, 2, dummyClient));
 
   }
 
@@ -79,4 +81,10 @@ public class AuctionHouseImpl extends UnicastRemoteObject implements AuctionHous
    }
 
    public void talk(){}
+
+   public int getNextClientID() throws RemoteException{
+     clientCount++;
+     return clientCount - 1;
+   }
+
 }

@@ -29,17 +29,24 @@ public class AuctionHouseCleaner implements Runnable {
             owner = auction.getOwner();
             winner = auction.getCurrentWinner();
             System.out.println("found finished auction");
+             //dont callback if dummy auction
             try {
-                owner.auctionFinishedOwner(id, name);
+              if (owner.getID() !=0){
+                if (auction.getCurrentBid() == -1){
+                  owner.auctionFinishedOwner(auction.getID(), -1, auction.getName());
+                } else {
+                  owner.auctionFinishedOwner(auction.getID(), winner.getID(), auction.getName());
+                }
+              }
               } catch (RemoteException e) {
                 System.out.println("Remote Exception");
               }
             for (AuctionClientIntf client:auction.getToCallback()) {
               try {
                 if (client == winner) {
-                  winner.auctionFinishedWinner(id, name);
+                  winner.auctionFinishedWinner(auction.getID(), winner.getID(), auction.getName());
                 } else {
-                  client.auctionFinished(winner.); //#TODO get id here
+                  client.auctionFinished(winner.getID(), auction.getCurrentBid()); //#TODO get id here
                 }
               } catch (RemoteException e) {
                 System.out.println("Remote Exception");
