@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.Timer;
+import java.util.Random;
 
 public class AuctionClient extends UnicastRemoteObject implements AuctionClientIntf {
 
@@ -19,11 +20,34 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
     ownsTheseAuctions = new ArrayList<Integer>();
   }
 
+  public AuctionClient(int id) throws RemoteException {
+    super();
+    ownsTheseAuctions = new ArrayList<Integer>();
+    this.id = id;
+  }
+
   public static void main(String[] args) {
     try {
       // Create the reference to the remote object through the rmiregistry
       AuctionHouse a = (AuctionHouse) /*(AuctionHouse) casts it to an AuctionHouse */
       Naming.lookup("rmi://localhost/AuctionHouse");
+
+      Scanner standardInput = new Scanner(System.in);
+
+      // create a user defined number of clients if they enter secret codeword
+      if (args.length > 0) {
+        if (args[0].equals("testingtesting123")){
+          System.out.println("How many clients would you like to create: ");
+          int numberOfClients = Integer.parseInt(standardInput.nextLine());
+          System.out.println("How many auctions would you like to create: ");
+          int numberOfAuctions = Integer.parseInt(standardInput.nextLine());
+          for (int i=0; i< numberOfClients; i++) {
+              Thread t= new Thread(new AuctionClientThread(numberOfAuctions, a));
+              t.start();
+          }
+
+        }
+      }
 
       AuctionClient auctionClient = new AuctionClient();
 
@@ -34,14 +58,12 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
 
       timer.scheduleAtFixedRate(new HeartbeatThread(a), 300000, 300000); // heartbeat every 5 mins
 
-      System.out.println("past the timer schedulin");
       // Now use the reference a to call remote methods
 
-      Scanner standardInput = new Scanner(System.in);
 
       while(true) { //change to run while client is still connected?
 
-      	System.out.println("1: Create auction 2: Show active auctions 3: Bid on item 4: Check connection status 5: Query recently finished auctions");
+      	System.out.println("1: Create auction 2: Show active auctions 3: Bid on item 4: Check connection status and server load 5: Query recently finished auctions");
         String line = standardInput.nextLine();
 
         switch(Integer.parseInt(line)) {
@@ -88,11 +110,10 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
             }
           case 4:
             try{
-              if(a.heartbeatMonitor()) {
-                System.out.println("Server still alive");
-              }
+              System.out.println(a.talk());
             } catch (RemoteException e) {
-              System.out.println("Server died");
+              System.out.println("Server dead, disconnecting.");
+              System.exit(0);
             }
             break;
           case 5:
@@ -126,9 +147,6 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
     }
   }
 
-  public void callBack(AuctionHouse a) throws RemoteException {
-    a.registerObject(this,"test", 5000);
-   }
    public void callBackString(String n) throws RemoteException {
      System.out.println(n);
   }

@@ -8,13 +8,11 @@ public interface AuctionHouse extends java.rmi.Remote {
 
   public String showAuctionItems(int activeOrFinished) throws RemoteException;
 
-  public void registerObject(AuctionClientIntf client, String n, int t) throws RemoteException;
-
   public boolean heartbeatMonitor() throws RemoteException;
 
   public boolean bidOnItem(int itemID, double bidValue, AuctionClientIntf client) throws RemoteException;
 
-  public void talk() throws RemoteException;
+  public String talk() throws RemoteException;
 
   public int getNextClientID() throws RemoteException;
 }

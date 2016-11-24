@@ -5,6 +5,7 @@ import java.net.*;
 import java.util.Iterator;
 import java.util.Calendar;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashSet;
 
 public class AuctionHouseImpl extends UnicastRemoteObject implements AuctionHouse {
 
@@ -62,23 +63,14 @@ public class AuctionHouseImpl extends UnicastRemoteObject implements AuctionHous
     return returnString;
   }
 
-  public void registerObject(AuctionClientIntf client, String n, int t) throws RemoteException {
-   try {
-     Thread.sleep(t);
-   } catch(InterruptedException e) {}
-     System.out.format("Calling client %s\n", n);
-     try {
-       client.callBackString("server says hi " + n);
-     } catch(RemoteException e) {
-        e.printStackTrace();
-     }
-   }
-
    public boolean heartbeatMonitor() throws RemoteException {
      return true;
    }
 
-   public void talk(){}
+   public String talk(){
+     int numberOfAuctions = auctions.size() + finishedAuctions.size();
+     return ("The server is alive and is currently holding " + numberOfAuctions + " auctions");
+   }
 
    public int getNextClientID() throws RemoteException{
      clientCount++;

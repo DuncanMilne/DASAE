@@ -14,6 +14,7 @@ public class HeartbeatThread extends TimerTask {
         }
       } catch (RemoteException e) {
         System.out.println("Not able to access the server.. shutting down");
+        System.exit(0);
         //unbind client from server
       }
     }

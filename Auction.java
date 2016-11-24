@@ -12,7 +12,8 @@ public class Auction {
   private int id;
   private AuctionClientIntf currentWinner;  //client currently winning auciton
   private AuctionClientIntf owner;  //client who created auction
-  private HashSet<AuctionClientIntf> toCallback; //list of clients to callback when this auction finishes
+  // #TODO make this a blocking hashset
+  private HashSet<AuctionClientIntf> toCallback; //list of clients to callback when this auction finishes. This is a blocking hashset because if something is added to the hashset after someone gets it messing with the hashset can change the result
 
   public Auction(String name, double minItemValue, long closeTime, int id, AuctionClientIntf client) throws RemoteException {
     this.name = name;

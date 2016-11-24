@@ -29,14 +29,22 @@ SERVER
 
 kelvin says not to bother with saving/restoring auction state to/from permanent storage
 
-STILL TO DO
-pinging server returns server load
-Cleanup
-
-TESTING STUFF
-if auctionclient takes an argument "test" create 1k clients
+Todo create multiple threads to create bids
 
 report ideas
 reconnecting clients could be an extension
 why i have synchronized what i've synchronized
 extension possibility - could track all clients and ping them all from the server side. this would allow the server to only be connected to
+when returning server load, it was too difficult to count the number of clients and then count them when connected. Could track them all, when attempting to count conencted clients, ping them all to see
+who is still there and remove if a remoteexception occurs.
+not done much error handling
+discuss the fact that its better to pass objects back by value to the client instead of return strings due to seperation of concerns.
+Having it as return strings reduces scope for error and its only simple auction site
+move try catches to only surround remote method invocations as opposed to whole methods
+when attempting to make 2 million auctions it gets really slow at around 400000, even if it is done in a multithreaded fashion. this is due to the size of the concurrenthashmap becoming unwieldy as when closing clients and restarting it goes slowly
+
+You should also implement a failure detector for the server to find what its current load is, etc.
+
+You are asked to write a report (of no more than 3000 words) on your auction system discussing your overall design, and how your implementation meets the design goals and requirements. You should make clear (a) which parts of the specification you have actually implemented, (b) whether your solution works as advertised, and (c) how you have tested it. The report should include a discussion of potential extensions that could improve the fault tolerance and availability of your system (you are not expected to implement these extensions!).
+
+Also, a section should be devoted to discussing the performance of your implementation after developing the appropriate test interfaces that will enable you to measure, e.g., max throughput of your system when responding to remote/local invocations, etc. Finally, you should include a section describing how you would expect me to test your system, given the classes, test programs, test data, etc. that you have submitted.
