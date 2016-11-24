@@ -28,7 +28,8 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
 
   public static void main(String[] args) {
     AuctionHouse a= null;
-          Scanner standardInput = null;
+    Scanner standardInput = null;
+
     try {
       // Create the reference to the remote object through the rmiregistry
       a = (AuctionHouse) /*(AuctionHouse) casts it to an AuctionHouse */
@@ -37,14 +38,16 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
       // create a user defined number of clients if they enter secret codeword
         if (args.length > 0) {
           if (args[0].equals("testingtesting123")){
-            System.out.println("How many clients would you like to create: ");
-            int numberOfClients = Integer.parseInt(standardInput.nextLine());
+            System.out.println("How many threads would you like to create: ");
+            int numberOfThreads = Integer.parseInt(standardInput.nextLine());
             System.out.println("How many auctions would you like to create: ");
             int numberOfAuctions = Integer.parseInt(standardInput.nextLine());
-            for (int i = 0; i< numberOfClients; i++) {
+            System.out.println("How many clients would you like to create: ");
+            int numberOfClients = Integer.parseInt(standardInput.nextLine());
+            for (int i = 0; i< numberOfThreads; i++) {
               Thread t = null;
-                t = new Thread(new AuctionClientThread(numberOfAuctions, a));
-                t.start();
+              t = new Thread(new AuctionClientThread(numberOfAuctions, a, numberOfClients));
+              t.start();
             }
 
           }
@@ -53,6 +56,8 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
         AuctionClient auctionClient = new AuctionClient();
 
         auctionClient.id = a.getNextClientID();
+
+        a.login(auctionClient);
 
       // Catch the exceptions that may occur – bad URL, Remote exception
       // Not bound exception or the arithmetic exception that may occur in
@@ -83,12 +88,14 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
 
       // Now use the reference a to call remote methods
 
+      System.out.println("");
+      String line;
 
       while(true) { //change to run while client is still connected?
 
         try{
-      	System.out.println("1: Create auction 2: Show active auctions 3: Bid on item 4: Check connection status and server load 5: Query recently finished auctions");
-        String line = standardInput.nextLine();
+      	System.out.println("1: Create auction 2: Show active auctions 3: Bid on item 4: Check connection status and server load 5: Query recently finished auctions 6: Logout");
+        line = standardInput.nextLine();
 
         switch(Integer.parseInt(line)) {
           case 1:
@@ -145,7 +152,9 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
           case 5:
             System.out.println(a.showAuctionItems(1));
             break;
-
+          case 6:
+            a.logout(auctionClient);
+            System.exit(0);
         }
       } catch (RemoteException re) {
           System.out.println("RemoteException");

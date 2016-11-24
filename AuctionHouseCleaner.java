@@ -39,7 +39,8 @@ public class AuctionHouseCleaner implements Runnable {
                 }
               }
               } catch (RemoteException e) {
-                System.out.println("Remote Exception");
+                System.out.println("Remote Exception when trying to contact owner");
+                a.users.remove(owner);
               }
             for (AuctionClientIntf client:auction.getToCallback()) {
               try {
@@ -49,7 +50,8 @@ public class AuctionHouseCleaner implements Runnable {
                   client.auctionFinished(winner.getID(), auction.getCurrentBid()); //#TODO get id here
                 }
               } catch (RemoteException e) {
-                System.out.println("Remote Exception");
+                System.out.println("Remote Exception when trying to contact bidder");
+                a.users.remove(client);
               }
             }
             a.auctions.remove(pair.getKey());

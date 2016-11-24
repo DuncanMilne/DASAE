@@ -26,10 +26,14 @@ public class Auction {
     toCallback = new HashSet<AuctionClientIntf>();
   }
 
-  public synchronized boolean bidOnItem(double bidValue, AuctionClientIntf client) throws RemoteException{  //probably need to make sure this is synchronized
+  public synchronized boolean bidOnItem(double bidValue, AuctionClientIntf client) throws RemoteException{
     if (bidValue > currentBidValue && (Calendar.getInstance().getTimeInMillis()/1000) < closeTime && this.owner != client) { //check whether the time the bid was placed is after the end of the auction, if so, bid fails
       if (currentWinner!=null)
-        currentWinner.overtakenAlert(id, bidValue);
+        try{
+          currentWinner.overtakenAlert(id, bidValue);
+        } catch (RemoteException re) {
+          System.out.println("Couldn't find current winner");
+        }
         currentBidValue = bidValue;
         currentWinner = client;
         if (!toCallback.contains(client)){

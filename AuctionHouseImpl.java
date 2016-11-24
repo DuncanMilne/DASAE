@@ -11,6 +11,7 @@ public class AuctionHouseImpl extends UnicastRemoteObject implements AuctionHous
 
   protected static ConcurrentHashMap<Integer, Auction> auctions = new ConcurrentHashMap<Integer, Auction>(); // int is id, auction is auction pertaining to the id
   protected static ConcurrentHashMap<Integer, Auction> finishedAuctions = new ConcurrentHashMap<Integer, Auction>();
+  protected static ArrayList<AuctionClientIntf> users = new ArrayList<AuctionClientIntf>();   //
   private static int currentId = 3;   // set as 3 initially because 0, 1 and 2 are created to bootstrap the server
   private static Thread auctionHouseCleaner;
   private static AuctionClientIntf dummyClient;
@@ -29,6 +30,14 @@ public class AuctionHouseImpl extends UnicastRemoteObject implements AuctionHous
     auctions.put(1, new Auction("test2", 5, cal.getTimeInMillis()/1000 + 60, 1, dummyClient));
     auctions.put(2, new Auction("test3", 10, cal.getTimeInMillis()/1000 + 300, 2, dummyClient));
 
+  }
+
+  public void login(AuctionClientIntf client) throws RemoteException {
+    users.add(client);
+  }
+
+  public void logout(AuctionClientIntf client) throws RemoteException {
+    users.remove(client);
   }
 
   public int createAuctionItem(String name, double minItemValue, long closeTime, AuctionClientIntf client) throws java.rmi.RemoteException {
@@ -69,7 +78,7 @@ public class AuctionHouseImpl extends UnicastRemoteObject implements AuctionHous
 
    public String talk(){
      int numberOfAuctions = auctions.size() + finishedAuctions.size();
-     return ("The server is alive and is currently holding " + numberOfAuctions + " auctions");
+     return ("The server is alive, is currently holding " + numberOfAuctions + " auctions and there are " + users.size() + " currently connected clients");
    }
 
    public int getNextClientID() throws RemoteException{

@@ -29,8 +29,6 @@ SERVER
 
 kelvin says not to bother with saving/restoring auction state to/from permanent storage
 
-Todo create multiple threads to create bids
-
 report ideas
 reconnecting clients could be an extension
 why i have synchronized what i've synchronized

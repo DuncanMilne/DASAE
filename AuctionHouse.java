@@ -15,4 +15,8 @@ public interface AuctionHouse extends java.rmi.Remote {
   public String talk() throws RemoteException;
 
   public int getNextClientID() throws RemoteException;
+
+  public void login(AuctionClientIntf client) throws RemoteException;
+
+  public void logout(AuctionClientIntf client) throws RemoteException;
 }

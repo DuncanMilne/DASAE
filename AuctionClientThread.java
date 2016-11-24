@@ -22,13 +22,16 @@ public class AuctionClientThread implements Runnable {
     }
   }
 
-  public AuctionClientThread(int auctionsToCreate, AuctionHouse a) throws RemoteException {
+  public AuctionClientThread(int auctionsToCreate, AuctionHouse a, int clientsToCreate) throws RemoteException {
     this.auctionsToCreate = auctionsToCreate;
     try {
-    auctionClientObject = new AuctionClient();
-  } catch (RemoteException e) {
+      for (int i = 1; i< clientsToCreate; i++){
+        a.login(new AuctionClient());
+      }
+      auctionClientObject = new AuctionClient();
+    } catch (RemoteException e) {
 
-  }
+    }
     this.a = a;
   }
 }
