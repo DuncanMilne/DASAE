@@ -27,31 +27,54 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
   }
 
   public static void main(String[] args) {
+    AuctionHouse a= null;
+          Scanner standardInput = null;
     try {
       // Create the reference to the remote object through the rmiregistry
-      AuctionHouse a = (AuctionHouse) /*(AuctionHouse) casts it to an AuctionHouse */
-      Naming.lookup("rmi://localhost/AuctionHouse");
-
-      Scanner standardInput = new Scanner(System.in);
-
+      a = (AuctionHouse) /*(AuctionHouse) casts it to an AuctionHouse */
+        Naming.lookup("rmi://localhost/AuctionHouse");
+        standardInput = new Scanner(System.in);
       // create a user defined number of clients if they enter secret codeword
-      if (args.length > 0) {
-        if (args[0].equals("testingtesting123")){
-          System.out.println("How many clients would you like to create: ");
-          int numberOfClients = Integer.parseInt(standardInput.nextLine());
-          System.out.println("How many auctions would you like to create: ");
-          int numberOfAuctions = Integer.parseInt(standardInput.nextLine());
-          for (int i=0; i< numberOfClients; i++) {
-              Thread t= new Thread(new AuctionClientThread(numberOfAuctions, a));
-              t.start();
+        if (args.length > 0) {
+          if (args[0].equals("testingtesting123")){
+            System.out.println("How many clients would you like to create: ");
+            int numberOfClients = Integer.parseInt(standardInput.nextLine());
+            System.out.println("How many auctions would you like to create: ");
+            int numberOfAuctions = Integer.parseInt(standardInput.nextLine());
+            for (int i = 0; i< numberOfClients; i++) {
+              Thread t = null;
+                t = new Thread(new AuctionClientThread(numberOfAuctions, a));
+                t.start();
+            }
+
           }
-
         }
-      }
 
-      AuctionClient auctionClient = new AuctionClient();
+        AuctionClient auctionClient = new AuctionClient();
 
-      auctionClient.id = a.getNextClientID();
+        auctionClient.id = a.getNextClientID();
+
+      // Catch the exceptions that may occur – bad URL, Remote exception
+      // Not bound exception or the arithmetic exception that may occur in
+      // one of the methods creates an arithmetic error (e.g. divide by zero)
+    }catch (MalformedURLException murle) {
+          System.out.println("MalformedURLException");
+          System.out.println(murle);
+        }
+        catch (RemoteException re) {
+          System.out.println("RemoteException");
+          System.out.println(re);
+        }
+        catch (NotBoundException nbe) {
+          System.out.println("NotBoundException");
+          System.out.println(nbe);
+        }
+        catch (java.lang.ArithmeticException ae) {
+          System.out.println("java.lang.ArithmeticException");
+          System.out.println(ae);
+        }
+
+
       //auctionClient.startHeartbeat(a);
 
       Timer timer = new Timer();
@@ -63,6 +86,7 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
 
       while(true) { //change to run while client is still connected?
 
+        try{
       	System.out.println("1: Create auction 2: Show active auctions 3: Bid on item 4: Check connection status and server load 5: Query recently finished auctions");
         String line = standardInput.nextLine();
 
@@ -82,7 +106,9 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
             String sec = standardInput.nextLine();
             Calendar cal = Calendar.getInstance();
             cal.add(Calendar.SECOND, Integer.parseInt(sec));
-            ownsTheseAuctions.add(a.createAuctionItem(name, minPrice, cal.getTimeInMillis()/1000, auctionClient));
+            int returnID = a.createAuctionItem(name, minPrice, cal.getTimeInMillis()/1000, auctionClient);
+            ownsTheseAuctions.add(returnID);
+            System.out.println("you have successfully created an item, the ID of the item is " + returnID);
             break;
           case 2:
             System.out.println(a.showAuctionItems(0));
@@ -121,29 +147,21 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
             break;
 
         }
-      }
+      } catch (RemoteException re) {
+          System.out.println("RemoteException");
+          System.out.println(re);
+        } catch (java.lang.ArithmeticException ae) {
+          System.out.println("java.lang.ArithmeticException");
+          System.out.println(ae);
+        } catch (java.lang.NullPointerException npe) {
+          System.out.println("java.lang.NullPointerException");
+          System.out.println(npe);
+        } catch (java.lang.NumberFormatException nfe) {
+          System.out.println("java.lang.NumberFormatExceptionException");
+          System.out.println(nfe);
+        }
       //for show available auctions do callback that returns the
       // auctionClient.callBack(a); disable temporarily
-    }
-
-  // Catch the exceptions that may occur – bad URL, Remote exception
-  // Not bound exception or the arithmetic exception that may occur in
-  // one of the methods creates an arithmetic error (e.g. divide by zero)
-    catch (MalformedURLException murle) {
-      System.out.println("MalformedURLException");
-      System.out.println(murle);
-    }
-    catch (RemoteException re) {
-      System.out.println("RemoteException");
-      System.out.println(re);
-    }
-    catch (NotBoundException nbe) {
-      System.out.println("NotBoundException");
-      System.out.println(nbe);
-    }
-    catch (java.lang.ArithmeticException ae) {
-      System.out.println("java.lang.ArithmeticException");
-      System.out.println(ae);
     }
   }
 

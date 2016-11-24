@@ -41,7 +41,8 @@ not done much error handling
 discuss the fact that its better to pass objects back by value to the client instead of return strings due to seperation of concerns.
 Having it as return strings reduces scope for error and its only simple auction site
 move try catches to only surround remote method invocations as opposed to whole methods
-when attempting to make 2 million auctions it gets really slow at around 400000, even if it is done in a multithreaded fashion. this is due to the size of the concurrenthashmap becoming unwieldy as when closing clients and restarting it goes slowly
+when attempting to make 2 million auctions it gets really slow at around 400000, even if it is
+done in a multithreaded fashion. this is due to the size of the concurrenthashmap becoming unwieldy as when closing clients and restarting it goes slowly
 
 You should also implement a failure detector for the server to find what its current load is, etc.
 
