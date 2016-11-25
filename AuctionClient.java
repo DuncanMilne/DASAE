@@ -29,18 +29,14 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
   public static void main(String[] args) {
     AuctionHouse a= null;
     Scanner standardInput = null;
-
+    standardInput = new Scanner(System.in);
     try {
       // Create the reference to the remote object through the rmiregistry
-      if (args.length > 0) {
-        if (!args[0].equals("-"))
-            a = (AuctionHouse) /*(AuctionHouse) casts it to an AuctionHouse */
-              Naming.lookup("rmi://" + args[0]);
-        } else {
-            a = (AuctionHouse) /*(AuctionHouse) casts it to an AuctionHouse */
-              Naming.lookup("rmi://localhost/AuctionHouse");
-        }
-      standardInput = new Scanner(System.in);
+
+      a = (AuctionHouse) /*(AuctionHouse) casts it to an AuctionHouse */
+	Naming.lookup("rmi://" + args[0]);
+
+      
       // create a user defined number of clients if they enter secret codeword
         if (args.length > 1) {
           if (args[1].equals("testingtesting123") || args[0].equals("testingtesting123")){
@@ -94,15 +90,17 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
 
       // Now use the reference a to call remote methods
 
-      System.out.println("");
+      System.out.println(" ");
       String line;
 
-      while(true) { //change to run while client is still connected?
+      while(true) { 
 
+      System.out.println("WHY IS THIS PRINTING");
         try{
       	System.out.println("1: Create auction 2: Show active auctions 3: Bid on item 4: Check connection status and server load 5: Query recently finished auctions 6: Logout");
         line = standardInput.nextLine();
 
+      System.out.println("DOSE THIS PRINT");
         switch(Integer.parseInt(line)) {
           case 1:
             System.out.println("Please enter name of item: ");
