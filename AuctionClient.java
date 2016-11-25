@@ -95,12 +95,10 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
 
       while(true) { 
 
-      System.out.println("WHY IS THIS PRINTING");
         try{
       	System.out.println("1: Create auction 2: Show active auctions 3: Bid on item 4: Check connection status and server load 5: Query recently finished auctions 6: Logout");
         line = standardInput.nextLine();
 
-      System.out.println("DOSE THIS PRINT");
         switch(Integer.parseInt(line)) {
           case 1:
             System.out.println("Please enter name of item: ");

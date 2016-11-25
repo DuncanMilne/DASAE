@@ -26,7 +26,10 @@ public class AuctionClientThread implements Runnable {
     this.auctionsToCreate = auctionsToCreate;
     try {
       for (int i = 1; i< clientsToCreate; i++){
-        a.login(new AuctionClient());
+        a.login(new AuctionClient()); 
+	if (i%10000==0 && i>0){
+	  System.out.println("creating client " + i);
+	}
       }
       auctionClientObject = new AuctionClient();
     } catch (RemoteException e) {
