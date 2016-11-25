@@ -32,7 +32,8 @@ kelvin says not to bother with saving/restoring auction state to/from permanent 
 report ideas
 reconnecting clients could be an extension
 why i have synchronized what i've synchronized
-extension possibility - could track all clients and ping them all from the server side. this would allow the server to only be connected to
+extension possibility - could track all clients and ping them all from the server side. this
+would allow the server to only be connected to
 when returning server load, it was too difficult to count the number of clients and then count them when connected. Could track them all, when attempting to count conencted clients, ping them all to see
 who is still there and remove if a remoteexception occurs.
 not done much error handling

@@ -32,12 +32,18 @@ public class AuctionClient extends UnicastRemoteObject implements AuctionClientI
 
     try {
       // Create the reference to the remote object through the rmiregistry
-      a = (AuctionHouse) /*(AuctionHouse) casts it to an AuctionHouse */
-        Naming.lookup("rmi://localhost/AuctionHouse");
-        standardInput = new Scanner(System.in);
+      if (args.length > 0) {
+        if (!args[0].equals("-"))
+            a = (AuctionHouse) /*(AuctionHouse) casts it to an AuctionHouse */
+              Naming.lookup("rmi://" + args[0]);
+        } else {
+            a = (AuctionHouse) /*(AuctionHouse) casts it to an AuctionHouse */
+              Naming.lookup("rmi://localhost/AuctionHouse");
+        }
+      standardInput = new Scanner(System.in);
       // create a user defined number of clients if they enter secret codeword
-        if (args.length > 0) {
-          if (args[0].equals("testingtesting123")){
+        if (args.length > 1) {
+          if (args[1].equals("testingtesting123") || args[0].equals("testingtesting123")){
             System.out.println("How many threads would you like to create: ");
             int numberOfThreads = Integer.parseInt(standardInput.nextLine());
             System.out.println("How many auctions would you like to create: ");
